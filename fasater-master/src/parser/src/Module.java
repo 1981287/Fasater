@@ -1,0 +1,486 @@
+//package sat;
+//
+//import java.io.FileNotFoundException;
+//import java.io.FileOutputStream;
+//import java.io.OutputStreamWriter;
+//import java.io.PrintWriter;
+//import java.io.UnsupportedEncodingException;
+//
+//public class Module {
+//	public static void write() throws UnsupportedEncodingException, FileNotFoundException{
+//		System.out.println("generating other modules...");
+//		PrintWriter pw1=new PrintWriter(new OutputStreamWriter(new FileOutputStream("assign_0.v", true), "utf-8"), true);
+//		pw1.println("module assign_0(evaluate,complement,vimp_p,vimp_n,fire,vout_p,vout_n,backtrack );		");
+//		pw1.println("    input evaluate;		");
+//		pw1.println("    input complement;		//鎹㈡埧闂寸殑鎼滃湴鏂硅惃杈� ");
+//		pw1.println("    input vimp_p,vimp_n;		");
+//		pw1.println("    input fire;		");
+//		pw1.println("    output vout_p,vout_n;		");
+//		pw1.println("    output backtrack;		");		
+//		pw1.println("   	");		
+//		
+//		pw1.println("    parameter init =2'b00;		");
+//		pw1.println("    parameter s0 =2'b01; 		");				
+//		pw1.println("    parameter s1 =2'b10;   		");
+//		pw1.println("   	");	
+//		
+//		pw1.println("    reg [1:0]state=init;		");
+//		pw1.println("    reg  vout_p=0;		");
+//		pw1.println("    reg  vout_n=0;		");
+//		pw1.println("    reg  backtrack;		");
+//		pw1.println("   	");		
+//		
+//		pw1.println("    always @(posedge fire)		");
+//		pw1.println("    begin		");
+//		pw1.println("        if (evaluate)		");    
+//		pw1.println("           begin		");
+//		pw1.println("            if (vimp_p==0&&vimp_n==0)		   //鍦ㄦ涔嬪墠娌℃湁瀵瑰叾浠栧彉閲忚繘琛岃祴鍊� 鎵�浠ヨ鍙橀噺娌℃湁钑村惈鍊�      1       ");		
+//		pw1.println("            begin		"); 
+//		pw1.println("              state=s0;		//鐢眎nit鐘舵�佽繘鍏� S0 鐘舵�侊紝璧嬪�间负0      1   ");
+//		pw1.println("              vout_p=0;  		");
+//		pw1.println("              vout_n=1; 		");
+//		pw1.println("              backtrack=0;  		");
+//		pw1.println("            end		");				
+//		pw1.println("            else if(vimp_p==1&&vimp_n==0)		//濡傛灉瀵瑰彉閲忚祴鍊兼椂 璇ュ彉閲忔湁钑村惈鍊� 鍒欐牴鎹暣鍚�艰繘琛岃祴鍊�        2                   ");
+//		pw1.println("            begin		");
+//		pw1.println("              state=s1;		//鐢眎nit鐘舵�佽繘鍏1鐘舵��  璧嬪�间负钑村惈鍊�                 2  ");
+//		pw1.println("              vout_p=1; 		");
+//		pw1.println("              vout_n=0; 		");
+//		pw1.println("              backtrack=0;		");				
+//		pw1.println("           end		");
+//		pw1.println("           else if(vimp_p==0&&vimp_n==1)		// 鎯呭喌涓�2鐩稿悓锛屾牴鎹暣鍚�艰繘琛岃祴鍊�                       3     ");
+//		pw1.println("           begin		");
+//		pw1.println("            state=s0;		//鐢眎nit鐘舵�佽繘鍏0鐘舵�侊紝璧嬪�间负钑村惈鍊�                3          ");
+//		pw1.println("            vout_p=0; 		");
+//		pw1.println("            vout_n=1; 		");				
+//		pw1.println("            backtrack=0;  		");
+//		pw1.println("          end 		");
+//		pw1.println("         end		");
+//		pw1.println("       else if(complement)");
+//		pw1.println("            begin		");
+//		pw1.println("               case(state)		");				
+//		pw1.println("                     s1:if(1) begin		");
+//		pw1.println("                               state=init;		//濡傛灉浠嶇劧瀛樺湪鍐茬獊锛岀敱S1杞崲涓篿nit锛屽彉閲忚祴鍊艰鍙栨秷锛宐acktrack鍙樹负1    1/2                 ");
+//		pw1.println("                               vout_p=0;		");
+//		pw1.println("                               vout_n=0; 		");
+//		pw1.println("                               backtrack=1;		");
+//		pw1.println("                              end		");				
+//		pw1.println("                     s0:if(vimp_p==0&&vimp_n==1)		//濡傛灉浠嶇劧瀛樺湪鍐茬獊锛岀敱S0杞崲涓篿nit锛�  鍙橀噺璧嬪�艰鍙栨秷锛�   backtrack鍙樹负1     3    ");
+//		pw1.println("                             begin		");
+//		pw1.println("                               state=init;		");
+//		pw1.println("                               vout_p=0;  		");
+//		pw1.println("                               vout_n=0;  		");		
+//		pw1.println("                               backtrack=1;		");
+//		pw1.println("                              end		");
+//		pw1.println("                     else if(vimp_p==0&&vimp_n==0)		");
+//		pw1.println("                                 begin		");
+//		pw1.println("                                     state=s1;		//鍐茬獊妫�娴嬪彂鐢熷啿绐侊紝鐢盨0杞崲涓篠1,鍙橀噺閲嶆柊璧嬪�间负1     1         ");				
+//		pw1.println("                                     vout_p=1;		");
+//		pw1.println("                                     vout_n=0;  		");
+//		pw1.println("                                     backtrack=0;  ");
+//		pw1.println("                                  end 		");
+//		pw1.println("               endcase		");			
+//		pw1.println("             end		");
+//		pw1.println("  end	          ");
+//		pw1.println("endmodule		");
+//		pw1.println("		");
+//	
+//		
+//		
+//		
+//		
+//		
+//		PrintWriter pw2=new PrintWriter(new OutputStreamWriter(new FileOutputStream("assign_1.v", true), "utf-8"), true);		
+//		pw2.println("module assign_1(evaluate,complement,vimp_p,vimp_n,fire,vout_p,vout_n,backtrack  );		");
+//		pw2.println("    input evaluate;		");
+//		pw2.println("    input complement;		");
+//		pw2.println("    input vimp_p,vimp_n;		");
+//		pw2.println("    input fire;		");
+//		pw2.println("    output vout_p,vout_n;		");
+//		pw2.println("    output backtrack;		");
+//		pw2.println("		");		
+//		
+//		pw2.println("    parameter init =2'b00;		");
+//		pw2.println("    parameter s0 =2'b01;		");
+//		pw2.println("    parameter s1 =2'b10; 		");
+//		pw2.println("		");
+//		
+//		pw2.println("    reg [1:0]state=init;		");
+//		pw2.println("    reg  vout_p=0;		");
+//		pw2.println("    reg  vout_n=0;		");
+//		pw2.println("    reg  backtrack;		");
+//		pw2.println("		");
+//
+//		pw2.println("    always @(posedge fire)		");
+//		pw2.println("    begin		");
+//		pw2.println("        if (evaluate)		");
+//		pw2.println("           begin		");		
+//		pw2.println("            if (vimp_p==0&&vimp_n==0)		");
+//		pw2.println("            begin		");
+//		pw2.println("            state=s1;		");
+//		pw2.println("            vout_p=1;		");		
+//		pw2.println("            vout_n=0; 		");
+//		pw2.println("            backtrack=0;  		");
+//		pw2.println("            end		");
+//		pw2.println("            else if(vimp_p==1&&vimp_n==0)		");
+//		pw2.println("            begin		");
+//		pw2.println("            state=s1;		");
+//		pw2.println("            vout_p=1;  		");
+//		pw2.println("            vout_n=0; 		");		
+//		pw2.println("            backtrack=0;  		");
+//		pw2.println("            end		");
+//		pw2.println("            else if(vimp_p==0&&vimp_n==1)		");
+//		pw2.println("            begin		");		
+//		pw2.println("            state=s0;		");
+//		pw2.println("            vout_p=0;   		");
+//		pw2.println("            vout_n=1;		");
+//		pw2.println("            backtrack=0; 		");
+//		pw2.println("          end 		");
+//		pw2.println("         end		");
+//		pw2.println("         else if(complement)		");
+//		pw2.println("            begin		");		
+//		pw2.println("               case(state)		");
+//		pw2.println("                     s0:if(1) begin		");
+//		pw2.println("                               state=init;		");
+//		pw2.println("                               vout_p=0;		");		
+//		pw2.println("                               vout_n=0;  		");
+//		pw2.println("                               backtrack=1; 		");
+//		pw2.println("                              end		");
+//		pw2.println("                     s1:if(vimp_p==1&&vimp_n==0)		");
+//		pw2.println("                             begin		");
+//		pw2.println("                               state=init;		");
+//		pw2.println("                               vout_p=0;  		");
+//		pw2.println("                               vout_n=0;  		");		
+//		pw2.println("                               backtrack=1;   		");
+//		pw2.println("                              end		");
+//		pw2.println("                         else if(vimp_p==0&&vimp_n==0)		");
+//		pw2.println("                                 begin		");		
+//		pw2.println("                                     state=s0;		");
+//		pw2.println("                                     vout_p=0; 		");
+//		pw2.println("                                     vout_n=1;   		");
+//		pw2.println("                                     backtrack=0; 		");
+//		pw2.println("                                  end 		");
+//		pw2.println("               endcase		");
+//		pw2.println("             end		");
+//		pw2.println("            end		");		
+//		pw2.println("endmodule		");
+//		pw2.println("		");
+//		pw2.println("		");	
+//		
+//		PrintWriter pw3=new PrintWriter(new OutputStreamWriter(new FileOutputStream("bi_chain_node.v", true), "utf-8"), true);
+//		pw3.println(" module bi_chain_node(in_top,in_bottom,conflict,backtrack,evaluate_fire,complement_fire,fire,reset,out_top,out_bottom );      ");
+//		pw3.println(" input in_top,in_bottom,conflict,backtrack;       ");
+//		pw3.println(" output evaluate_fire,complement_fire,fire,reset,out_top,out_bottom;     //evaluate_fire鍜宑omplement_fire鐢ㄤ簬鍛婄煡璧嬪�煎崟鍏冩娆¤姹備俊鍙风殑鏉ユ簮1 " + 
+//				"                                                                             //fire婵�鍙戣祴鍊煎崟鍏�1" + 
+//				"                                                                             //reset瀵筫valuate鍜宑omplement杩涜澶嶄綅1 ");
+//		pw3.println("       ");
+//		pw3.println(" wire outR_0;       ");
+//		pw3.println(" wire outR_1;       ");
+//		pw3.println(" wire outR_2;      ");
+//		pw3.println(" wire outR_3;       ");
+//		pw3.println(" wire outR_4;       ");
+//		pw3.println(" wire inR;       ");
+//		pw3.println(" wire reset;      ");
+//		pw3.println(" wire fire;      ");	
+//		pw3.println(" wire conflict_fire;      ");
+//		
+//		pw3.println(" wire bottom;      ");
+//		pw3.println(" wire delay0_outR;      ");		
+//		pw3.println(" wire delay1_outR;       ");
+////		pw3.println(" wire delay2_outR;       ");
+////		pw3.println(" wire delay3_outR;      ");		
+////		pw3.println(" wire delay4_outR;       ");
+//		pw3.println(" wire delay0_fire;       ");
+//		pw3.println(" wire delay1_fire;      ");
+////		pw3.println(" wire delay2_fire;       ");
+////		pw3.println(" wire delay3_fire;       ");
+////		pw3.println(" wire delay4_fire;       ");
+//		pw3.println("       ");		
+//		pw3.println(" assign	inR = outR_0 ^ outR_1;      ");
+//		pw3.println("       ");
+//		pw3.println("(*DONT_TOUCH=\"yes\"*)  ClickJoin controller0(.in_R(in_top),      .out_R(outR_0),      .fire(evaluate_fire));");
+//		pw3.println("(*DONT_TOUCH=\"yes\"*)  ClickJoin controller1(.in_R(bottom),      .out_R(outR_1),      .fire(complement_fire));");
+//		pw3.println("(*DONT_TOUCH=\"yes\"*)  DEL1      delay0(.in_R(inR),              .out_R(delay0_outR), .fire(delay0_fire));");
+//		pw3.println("(*DONT_TOUCH=\"yes\"*)  ClickJoin controller2(.in_R(delay0_outR), .out_R(outR_2),      .fire(fire));");
+//		pw3.println("(*DONT_TOUCH=\"yes\"*)  DEL4  	   delay1(.in_R(outR_2), 	       .out_R(delay1_outR), .fire(delay1_fire));");		
+////		pw3.println("(*DONT_TOUCH=\"yes\"*)  ClickJoin 	 delay2(.in_R(delay1_outR), .out_R(delay2_outR), .fire(delay2_fire));");
+////		pw3.println("(*DONT_TOUCH=\"yes\"*)  ClickJoin 	 delay3(.in_R(delay2_outR), .out_R(delay3_outR), .fire(delay3_fire));");
+////		pw3.println("(*DONT_TOUCH=\"yes\"*)  ClickJoin 	 delay4(.in_R(delay3_outR), .out_R(delay4_outR), .fire(delay4_fire));");
+//		pw3.println("(*DONT_TOUCH=\"yes\"*)  ClickJoin controller3(.in_R(delay1_outR), .out_R(outR_3),      .fire(reset));");
+//		pw3.println("(*DONT_TOUCH=\"yes\"*)  ClickJoin controller4(.in_R(outR_3),      .out_R(outR_4),		 .fire(conflict_fire));");
+//		pw3.println("       ");			
+//		pw3.println("(*DONT_TOUCH=\"yes\"*)  conflict_processor conflict_processor(.conflict_fire(conflict_fire),.backtrack(backtrack), .conflict(conflict), .in_bottom(in_bottom), .out_bottom(out_bottom), .top(out_top), .bottom(bottom));        ");		
+//		pw3.println("       ");
+//		pw3.println("endmodule       ");
+//		pw3.println("       ");
+//		pw3.println("       ");
+//		pw3.println("       ");
+//		pw3.println("       ");		
+//		
+//		
+//		PrintWriter pw4=new PrintWriter(new OutputStreamWriter(new FileOutputStream("ClickJoin.v", true), "utf-8"), true);
+//		pw4.println("module ClickJoin(in_R, out_R, fire);       ");
+//		pw4.println(" 	input	in_R;      ");		
+//		pw4.println("	output	fire, out_R;       ");		
+//		pw4.println("       ");
+//		pw4.println("	wire	in_R_nor, out_R_delayed, out_R_tmp;       ");		
+//		pw4.println("	assign	fire = in_R_nor;       ");			
+//		pw4.println(" 	    ");
+//		pw4.println("  LUT2 #(.INIT(4'b0110)) nor_in_R    ");		
+//		pw4.println("	(       ");			
+//		pw4.println("	   .O(in_R_nor),        ");
+//		pw4.println("	   .I0(out_R_delayed),        ");		
+//		pw4.println("	   .I1(in_R)        ");			
+//		pw4.println(" 	);      ");
+//		pw4.println("       ");		
+//		pw4.println("	FDPE #(.INIT(1'b0)) ff_in_R (       ");		
+//		pw4.println(" 		  .Q(out_R),         ");
+//		pw4.println("		  .C(in_R_nor),        ");		
+//		pw4.println("		  .CE(1'b1),         ");			
+//		pw4.println("		  .PRE(1'b0),       ");
+//		pw4.println("		  .D(out_R_tmp)          ");		
+//		pw4.println("	   );       ");			
+//		pw4.println("       ");
+//		pw4.println(" LUT1 #(.INIT(2'b01)) in_R_inv        ");		
+//		pw4.println("	(       ");				
+//		pw4.println("	   .O(out_R_tmp),         ");
+//		pw4.println("	   .I0(out_R)         ");		
+//		pw4.println("   );    ");		
+//		pw4.println("       ");
+//		pw4.println("	LUT1 #(.INIT(2'b10)) in_R_delay        ");		
+//		pw4.println(" 	(       ");			
+//		pw4.println("    .O(out_R_delayed),        ");
+//		pw4.println("    .I0(out_R)       ");		
+//		pw4.println("  );     ");			
+//		pw4.println("       ");
+//		pw4.println(" endmodule      ");		
+//		pw4.println("       ");				
+//		pw4.println("       ");			
+//		pw4.println("       ");
+//	
+//		
+//		PrintWriter pw5=new PrintWriter(new OutputStreamWriter(new FileOutputStream("conflict_processor.v", true), "utf-8"), true);		
+//		pw5.println("module conflict_processor(       ");		
+//		pw5.println(" 	conflict_fire, backtrack, conflict, in_bottom, out_bottom, top, bottom      ");			
+//		pw5.println("     );      ");			
+//		pw5.println(" 	input	backtrack, conflict_fire, conflict, in_bottom;      ");			
+//		pw5.println("   output  out_bottom, top, bottom;    ");			
+//		pw5.println("       ");			
+//		pw5.println("    reg  top=0;");		
+//		pw5.println("    reg  bottom_0=0;   ");			
+//		pw5.println("    reg  out_bottom=0;  ");			
+//		pw5.println("       ");			
+//		pw5.println("       ");				
+//		pw5.println("      always@ (posedge conflict_fire) ");			
+//		pw5.println("         begin ");			
+//		pw5.println("            if(backtrack) ");			
+//		pw5.println("                 begin");				
+//		pw5.println("                    out_bottom = ~out_bottom;");			
+//		pw5.println("                  end ");			
+//		pw5.println("            else if(conflict)         ");			
+//		pw5.println("                  begin  ");				
+//		pw5.println("                     bottom_0 = ~bottom_0; ");			
+//		pw5.println("                   end ");			
+//		pw5.println("            else if(~backtrack && ~conflict)  ");			
+//		pw5.println("                   begin ");				
+//		pw5.println("                      top = ~top;    ");			
+//		pw5.println("                   end");			
+//		pw5.println("         end ");			
+//		pw5.println("       ");				
+//		pw5.println("           ");			
+//		pw5.println("   assign	bottom = bottom_0 ^ in_bottom;    ");			
+//		pw5.println("       ");			
+//		pw5.println("endmodule       ");				
+//		pw5.println("       ");			
+//		pw5.println("       ");			
+//		
+//		
+//		PrintWriter pw6=new PrintWriter(new OutputStreamWriter(new FileOutputStream("assign_unit_0.v", true), "utf-8"), true);		
+//		pw6.println(" module assign_unit_0(evaluate_fire,complement_fire,fire,vimp_p,vimp_n,reset,vout_p,vout_n,backtrack);      ");			
+//		pw6.println("   input  evaluate_fire,complement_fire,fire,vimp_p,vimp_n,reset;      ");			
+//		pw6.println("   output   vout_p,vout_n,backtrack;   ");			
+//		pw6.println("   wire   evaluate,complement;     ");	
+//		pw6.println("       ");			
+//		pw6.println("   (*DONT_TOUCH=\"yes\"*)  assign_0 assign_0(evaluate,complement,vimp_p,vimp_n,fire,vout_p,vout_n,backtrack );    ");			
+//		pw6.println("   (*DONT_TOUCH=\"yes\"*)  init init( evaluate_fire,complement_fire,reset,evaluate,complement);    ");			
+//		pw6.println("       ");		
+//		pw6.println(" endmodule     ");			
+//		pw6.println("       ");			
+//		pw6.println("       ");			
+//
+//		
+//		
+//		PrintWriter pw7=new PrintWriter(new OutputStreamWriter(new FileOutputStream("assign_unit_1.v", true), "utf-8"), true);		
+//		pw7.println(" module assign_unit_1(evaluate_fire,complement_fire,fire,vimp_p,vimp_n,reset,vout_p,vout_n,backtrack);      ");		
+//		pw7.println("   input  evaluate_fire,complement_fire,fire,vimp_p,vimp_n,reset;     ");	
+//		pw7.println("   output  vout_p,vout_n,backtrack;    ");		
+//		pw7.println("   wire  evaluate,complement;     ");			
+//		pw7.println("       ");	
+//		pw7.println("    (*DONT_TOUCH=\"yes\"*)  assign_1 assign_1(evaluate,complement,vimp_p,vimp_n,fire,vout_p,vout_n,backtrack );   ");			
+//		pw7.println("    (*DONT_TOUCH=\"yes\"*)  init init(evaluate_fire,complement_fire,reset,evaluate,complement);   ");	
+//		pw7.println("       ");			
+//		pw7.println(" endmodule      ");	
+//		pw7.println("       ");			
+//		pw7.println("       ");	
+//	
+//
+//		PrintWriter pw8=new PrintWriter(new OutputStreamWriter(new FileOutputStream("var_0.v", true), "utf-8"), true);		
+//		pw8.println("  module var_0(vimp_p,vimp_n,conflict,in_top,in_bottom,out_top,out_bottom,vout_p,vout_n);     ");
+//		pw8.println("   input vimp_p,vimp_n,conflict;    ");		
+//		pw8.println("   input in_top,in_bottom;    ");		
+//		pw8.println("   output out_top,out_bottom;   ");		
+//		pw8.println("   output vout_p,vout_n;    ");
+//		pw8.println("       ");		
+//		pw8.println("    wire backtrack;   ");		
+//		pw8.println("    wire evaluate_fire;   ");			
+//		pw8.println("    wire complement_fire;   ");
+//		pw8.println("    wire fire;   ");		
+//		pw8.println("    wire reset;   ");		
+//		pw8.println("       ");			
+//		pw8.println("     (*DONT_TOUCH=\"yes\"*)   bi_chain_node bi_chain_node(.in_top(in_top),.in_bottom(in_bottom),.conflict(conflict),.backtrack(backtrack),.evaluate_fire(evaluate_fire),.complement_fire(complement_fire),.fire(fire),.reset(reset),.out_top(out_top),.out_bottom(out_bottom));    ");
+//		pw8.println("     (*DONT_TOUCH=\"yes\"*)   assign_unit_0 assign_unit_0(.evaluate_fire(evaluate_fire),.complement_fire(complement_fire),.fire(fire),.vimp_p(vimp_p),.vimp_n(vimp_n),.reset(reset),.vout_p(vout_p),.vout_n(vout_n),.backtrack(backtrack));  ");		
+//		pw8.println("       ");		
+//		pw8.println("   endmodule    ");		
+//		pw8.println("       ");
+//		pw8.println("       ");		
+//	
+//		PrintWriter pw9=new PrintWriter(new OutputStreamWriter(new FileOutputStream("var_1.v", true), "utf-8"), true);		
+//		pw9.println("  module var_1(vimp_p,vimp_n,conflict,in_top,in_bottom,out_top,out_bottom,vout_p,vout_n);     ");
+//		pw9.println("     input vimp_p,vimp_n,conflict;    ");		
+//		pw9.println("     input in_top,in_bottom;  ");		
+//		pw9.println("     output out_top,out_bottom; ");		
+//		pw9.println("     output vout_p,vout_n;  ");
+//		pw9.println("       ");		
+//		pw9.println("     wire backtrack;  ");		
+//		pw9.println("     wire evaluate_fire;  ");					
+//		pw9.println("     wire complement_fire;  ");
+//		pw9.println("     wire fire;  ");		
+//		pw9.println("     wire reset;  ");		
+//		pw9.println("       ");			
+//		pw9.println("    (*DONT_TOUCH=\"yes\"*)   bi_chain_node bi_chain_node(.in_top(in_top),.in_bottom(in_bottom),.conflict(conflict),.backtrack(backtrack),.evaluate_fire(evaluate_fire),.complement_fire(complement_fire),.fire(fire),.reset(reset),.out_top(out_top),.out_bottom(out_bottom));   ");
+//		pw9.println("    (*DONT_TOUCH=\"yes\"*)   assign_unit_1 assign_unit_1(.evaluate_fire(evaluate_fire),.complement_fire(complement_fire),.fire(fire),.vimp_p(vimp_p),.vimp_n(vimp_n),.reset(reset),.vout_p(vout_p),.vout_n(vout_n),.backtrack(backtrack));   ");		
+//		pw9.println("       ");		
+//		pw9.println("    endmodule   ");		
+//		pw9.println("       ");		
+//
+//		PrintWriter pw10=new PrintWriter(new OutputStreamWriter(new FileOutputStream("init.v", true), "utf-8"), true);	
+//		pw10.println(" module init(evaluate_fire,complement_fire,reset,evaluate,complement );      ");			
+//		pw10.println("       ");			
+//		pw10.println("     input evaluate_fire;     ");			
+//		pw10.println("     input complement_fire;  ");			
+//		pw10.println("     input reset;  ");			
+//		pw10.println("     output evaluate;      ");			
+//		pw10.println("     output complement;      ");			
+//		pw10.println("       ");			
+//		pw10.println("     reg  evaluate=0;       ");			
+//		pw10.println("     reg  complement=0;       ");			
+//		pw10.println("       ");			
+//		pw10.println("   always @(posedge evaluate_fire or posedge reset)       ");			
+//		pw10.println("      begin      ");			
+//		pw10.println("         if (evaluate_fire) ");			
+//		pw10.println("          begin ");			
+//		pw10.println("           evaluate=1; ");			
+//		pw10.println("          end ");			
+//		pw10.println("        else if(reset) ");			
+//		pw10.println("          begin        ");			
+//		pw10.println("            evaluate=0;");			
+//		pw10.println("          end    ");			
+//		pw10.println("       end  ");			
+//		pw10.println("       ");			
+//		pw10.println("   always@(posedge complement_fire or posedge reset)    ");			
+//		pw10.println("      begin");			
+//		pw10.println("          if (complement_fire) ");			
+//		pw10.println("           begin   ");			
+//		pw10.println("             complement=1;   ");			
+//		pw10.println("           end ");			
+//		pw10.println("         else if(reset)   ");			
+//		pw10.println("           begin   ");			
+//		pw10.println("             complement=0;  ");			
+//		pw10.println("           end    ");			
+//		pw10.println("        end  ");			
+//		pw10.println("       ");			
+//		pw10.println("  endmodule  ");			
+//		pw10.println("       ");			
+//		pw10.println("       ");			
+//		pw10.println("       ");			
+//
+//		
+//		
+//		PrintWriter pw11=new PrintWriter(new OutputStreamWriter(new FileOutputStream("DEL1.v", true), "utf-8"), true);	
+//		pw11.println(" module DEL1(in_R, out_R, fire);      ");			
+//		pw11.println("       ");			
+//		pw11.println("     input in_R;     ");					
+//		pw11.println("     output fire, out_R;  ");
+//		pw11.println("       ");
+//		pw11.println("   telescope telescope1(in_R,  out_R, fire);    ");					
+//		pw11.println("  endmodule  ");			
+//		pw11.println("       ");			
+//		pw11.println("       ");
+//		
+//
+//		PrintWriter pw12=new PrintWriter(new OutputStreamWriter(new FileOutputStream("DEL4.v", true), "utf-8"), true);	
+//		pw12.println(" module DEL4(in_R, out_R, fire);      ");			
+//		pw12.println("       ");			
+//		pw12.println("     input in_R;     ");					
+//		pw12.println("     output fire, out_R;  ");
+//		pw12.println("       ");
+//		pw12.println("     wire delay1,delay2,delay3;  ");
+//		pw12.println("     wire fire1,fire2,fire3;  ");
+//		pw12.println("       ");
+//		pw12.println("   telescope telescope1(in_R,    delay1, fire1);    ");		
+//		pw12.println("   telescope telescope2(delay1,  delay2, fire2);    ");	
+//		pw12.println("   telescope telescope3(delay2,  delay3, fire3);    ");	
+//		pw12.println("   telescope telescope4(delay3,  out_R,  fire);    ");	
+//		pw12.println("  endmodule  ");			
+//		pw12.println("       ");			
+//		pw12.println("       ");
+//		
+//		
+//		PrintWriter pw13=new PrintWriter(new OutputStreamWriter(new FileOutputStream("telescope.v", true), "utf-8"), true);
+//		pw13.println("module telescope(in_R, out_R, fire);       ");
+//		pw13.println(" 	input	in_R;      ");		
+//		pw13.println("	output	fire, out_R;       ");		
+//		pw13.println("       ");
+//		pw13.println("	wire	in_R_nor, out_R_delayed, out_R_tmp;       ");		
+//		pw13.println("	assign	fire = in_R_nor;       ");			
+//		pw13.println(" 	    ");
+//		pw13.println("  LUT2 #(.INIT(4'b0110)) nor_in_R    ");		
+//		pw13.println("	(       ");			
+//		pw13.println("	   .O(in_R_nor),        ");
+//		pw13.println("	   .I0(out_R_delayed),        ");		
+//		pw13.println("	   .I1(in_R)        ");			
+//		pw13.println(" 	);      ");
+//		pw13.println("       ");		
+//		pw13.println("	FDPE #(.INIT(1'b0)) ff_in_R (       ");		
+//		pw13.println(" 		  .Q(out_R),         ");
+//		pw13.println("		  .C(in_R_nor),        ");		
+//		pw13.println("		  .CE(1'b1),         ");			
+//		pw13.println("		  .PRE(1'b0),       ");
+//		pw13.println("		  .D(out_R_tmp)          ");		
+//		pw13.println("	   );       ");			
+//		pw13.println("       ");
+//		pw13.println(" LUT1 #(.INIT(2'b01)) in_R_inv        ");		
+//		pw13.println("	(       ");				
+//		pw13.println("	   .O(out_R_tmp),         ");
+//		pw13.println("	   .I0(out_R)         ");		
+//		pw13.println("   );    ");		
+//		pw13.println("       ");
+//		pw13.println("	LUT1 #(.INIT(2'b10)) in_R_delay        ");		
+//		pw13.println(" 	(       ");			
+//		pw13.println("    .O(out_R_delayed),        ");
+//		pw13.println("    .I0(out_R)       ");		
+//		pw13.println("  );     ");			
+//		pw13.println("       ");
+//		pw13.println(" endmodule      ");		
+//		pw13.println("       ");				
+//		pw13.println("       ");			
+//		pw13.println("       ");
+//		
+//		System.out.println("generating finished");
+//	}
+//public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException {
+//	Module.write();
+//}
+//}
+// 
+// 
